@@ -14,7 +14,7 @@ This skill chains three systems together:
 ```
 Creative Ideation (concept + copy)
     ↓
-TD Creative Studio Agent (AI image generation from concept description)
+mcp__tdx-studio__generate_image (AI image generation from concept description)
     ↓
 Pillow Text Compositor (headline overlay on generated image)
     ↓
@@ -45,8 +45,7 @@ Generate **3-5 Instagram image ad concepts** in this text-only format:
 [Combine the visual concept description with the primary text theme into a rich,
 detailed prompt for AI image generation. **If Description text is provided, incorporate
 it into the prompt context.** Include composition, lighting, color palette, mood, style,
-and any specific visual elements. This is what gets sent to the TD Creative Studio
-Image Generation Agent.]
+and any specific visual elements. This is what gets sent to mcp__tdx-studio__generate_image.]
 
 - **Dimensions**: 1024x1024 (will be generated at this size)
 - **Style**: [Photorealistic, illustration, flat design, etc.]
@@ -87,53 +86,26 @@ When triggered, execute the full pipeline for each confirmed concept.
 
 ## Execution Pipeline
 
-### Step 1: Set Project Context
+### Step 1: Generate the Base Image
 
-```bash
-tdx use llm_project "TD-Managed: Creative Studio"
+Call `mcp__tdx-studio__generate_image` with the **Image Generation Prompt** from the confirmed concept:
+
+```
+mcp__tdx-studio__generate_image(prompt: "<Image Generation Prompt from confirmed concept>")
 ```
 
-### Step 2: Generate the Base Image
-
-Send the **Image Generation Prompt** from the confirmed concept to the TD agent:
-
-```bash
-tdx chat --stream \
-  --new \
-  --agent "TD-Managed: Creative Studio/TD-Managed: Image Generation Agent" \
-  "<Image Generation Prompt from confirmed concept>"
-```
-
-**Important tool selection**: Use `tdx chat --stream` via Bash for this step. The `mcp__tdx-studio__tdx_chat` tool strips binary image data, which breaks the image extraction process. Include the `--new` flag to start a fresh chat, ensuring the history contains only one image for clean extraction.
-
-Parse the `chatId` from the metadata event in the stream output:
-```json
-{"type":"metadata","data":{"chatId":"<CHAT_ID>"}}
-```
-
-### Step 3: Extract Image from Chat History
-
-```bash
-tdx llm history "<CHAT_ID>"
-```
-
-This output is large (2-3MB+) and will be persisted to a tool-results file. Extract the image binary:
+The tool returns the generated image directly. Save the image data to a file:
 
 ```python
-import re, base64
+import base64
 
-with open("<persisted_output_file>", "r") as f:
-    content = f.read()
-
-matches = list(re.finditer(r'"binaryBase64":"([A-Za-z0-9+/=]+)"', content))
-if matches:
-    b64_data = matches[-1].group(1)  # Last match = most recent image
-    img_bytes = base64.b64decode(b64_data)
-    with open("<concept_name>_base.png", "wb") as out:
-        out.write(img_bytes)
+# image_data = base64 string returned by mcp__tdx-studio__generate_image
+img_bytes = base64.b64decode(image_data)
+with open("<concept_name>_base.png", "wb") as out:
+    out.write(img_bytes)
 ```
 
-### Step 3.5: Logo Overlay (Optional)
+### Step 2: Logo Overlay (Optional)
 
 **When to use**: If brand guidelines include a logo file, composite it onto the AI-generated image before adding text overlays.
 
@@ -195,7 +167,7 @@ else:
 
 ---
 
-### Step 4: Composite Headline Text
+### Step 3: Composite Headline Text
 
 Use Python Pillow to overlay the **Headline** text onto the generated image (with logo if provided), using the styling defined in `Headline Overlay Style`.
 
@@ -276,13 +248,13 @@ if SUBTITLE_TEXT:
 img.convert("RGB").save("<concept_name>_final.png", "PNG", quality=95)
 ```
 
-### Step 5: Display the Final Image
+### Step 4: Display the Final Image
 
 ```
 open_file(path: "<concept_name>_final.png")
 ```
 
-### Step 6: Iteration Support
+### Step 5: Iteration Support
 
 After displaying, offer the user iteration options:
 - **Font**: Serif, Sans, Helvetica
@@ -370,7 +342,7 @@ Optional additional context, often hidden in feed.
 
 ## Image Generation Prompt Tips
 
-The TD Creative Studio Image Generation Agent uses Amazon Bedrock Nova Canvas (default 1024x1024).
+The `mcp__tdx-studio__generate_image` tool uses GPT Image 1.5.
 
 - **Do**: Be descriptive (composition, lighting, colors, mood, textures), specify style explicitly ("photorealistic", "digital illustration"), include negative prompts, leave visual breathing room where headline will go
 - **Don't**: Request copyrighted characters/brand logos, use vague descriptions, forget to leave clean space in the text position area
@@ -384,7 +356,7 @@ The TD Creative Studio Image Generation Agent uses Amazon Bedrock Nova Canvas (d
 | Primary Text | Instagram caption + informs image generation theme |
 | Headline | Text composited onto the generated image |
 | Description | Instagram ad description field + enriches image generation prompt when available |
-| Image Generation Prompt | Sent to TD Creative Studio Image Gen Agent |
+| Image Generation Prompt | Sent to mcp__tdx-studio__generate_image |
 | Headline Overlay Style | Controls Pillow text compositing parameters |
 
 ---
