@@ -1,6 +1,6 @@
 ---
 name: image-gen
-description: Generate real Instagram image ads with AI-generated visuals and text overlays. Combines TD Creative Studio image generation with headline compositing via Pillow. Use when user wants to create Instagram ad images, generate ad visuals with text, or produce shareable ad PNGs. Trigger keywords: instagram ad image, generate ad image, image ad with text, ad visual, create instagram ad.
+description: Generate real Instagram image ads with AI-generated visuals and text overlays. Combines mcp__tdx-studio__generate_image for AI image generation with headline compositing via Pillow. Use when user wants to create Instagram ad images, generate ad visuals with text, or produce shareable ad PNGs. Trigger keywords: instagram ad image, generate ad image, image ad with text, ad visual, create instagram ad.
 ---
 
 # Instagram Image Ad Generation
@@ -18,7 +18,7 @@ mcp__tdx-studio__generate_image (AI image generation from concept description)
     ↓
 Pillow Text Compositor (headline overlay on generated image)
     ↓
-Treasure Studio (display final PNG in artifact panel)
+mcp__tdx-studio__generate_image (display final PNG in artifact panel)
 ```
 
 **Key difference from standard Instagram skill**: The `Image Concept` description and `Primary Text` become the **image generation prompt**. The `Headline` becomes the **text overlay** composited onto the final image.
