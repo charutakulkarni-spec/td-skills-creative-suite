@@ -117,6 +117,7 @@
       "source": "./",
       "strict": false,
       "skills": [
+        "./creative-skills/creative-brief-architect",
         "./creative-skills/multi-channel-ad-ideation",
         "./creative-skills/brand-compliance",
         "./creative-skills/brand-onboarding"

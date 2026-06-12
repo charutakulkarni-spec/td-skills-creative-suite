@@ -139,6 +139,14 @@ tests:
   - prompt: "Check if individual IDs appear in multiple canonical ID groups"
     expected: id-graph-ids-to-canonical-id
 
+  # === Creative Brief Skills ===
+
+  - prompt: "Help me create a creative brief for my campaign"
+    expected: creative-brief-architect
+
+  - prompt: "I need to build a creative brief for a product launch"
+    expected: creative-brief-architect
+
   # === Email & Engage Skills ===
 
   - prompt: "Create an email campaign for my segment"
