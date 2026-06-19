@@ -98,33 +98,35 @@ Generate 3-5 strategic directions in a comparison table with 7-dimension quality
 
 **MANDATORY checkpoint.** After the user confirms their creative direction, always ask:
 
-> "Great — your creative direction is locked in. Before we move to asset requirements, would you like me to generate a visual mood board? I'll create 6 AI-generated images that capture the look and feel of this direction. This helps align the team on the visual tone before production."
+> "Great — your creative direction is locked in. Before we move to asset requirements, would you like me to generate a visual mood board? I'll create 4 AI-generated images that capture the look and feel of this direction. This helps align the team on the visual tone before production."
 
 **Wait for the user's response.** Do NOT proceed to Phase 4 until they answer.
 
 **If yes:**
 
-1. **Generate 6 image prompts** based on the selected creative direction, brand guidelines, and campaign context. Each image should capture a different aspect of the visual direction:
+1. **Generate 4 image prompts** based on the selected creative direction, brand guidelines, and campaign context. Each image should capture a different aspect of the visual direction:
 
 | Cell | Role | Example |
 |------|------|---------|
 | 1 | Hero product/service shot | Product in context with brand lighting |
 | 2 | Lifestyle/audience moment | Target audience in authentic setting |
-| 3 | Texture/material detail | Close-up of brand-relevant material or pattern |
-| 4 | Environment/setting | Location relevant to campaign, brand colors present |
-| 5 | Human connection/emotion | Gesture or interaction conveying brand values |
-| 6 | Brand pattern/abstract | Geometric or organic pattern in brand colors |
+| 3 | Environment/setting | Location relevant to campaign, brand colors present |
+| 4 | Color/texture palette | Brand colors, materials, or patterns as abstract composition |
 
 2. **Generate images** using the TD Creative Studio Image Generation Agent. Follow the pipeline in `creative-skills/multi-channel-ad-ideation/channels/image-gen/SKILL.md`:
    - Set project: `tdx use llm_project "TD-Managed: Creative Studio"`
    - Generate each image: `tdx chat --stream --new --agent "TD-Managed: Creative Studio/TD-Managed: Image Generation Agent" "<prompt>"`
    - Extract images from chat history
 
-3. **Render as HTML mood board** — create an HTML file with a 2x3 grid layout, embed images as base64, include captions and brand color swatches. Open via `open_file`.
+3. **Ask if they want an HTML mood board:**
 
-4. **Save the mood board HTML** alongside the workspace note for future reference.
+   > "Would you like me to render these as an HTML mood board you can share with the team?"
 
-**Regeneration:** If the user wants to swap a specific cell ("regenerate cell 3", "replace the texture image"), regenerate only that image and update the HTML.
+   **If yes:** Create an HTML file with a 2x2 grid layout, embed images as base64, include captions and brand color swatches. Open via `open_file`. Save alongside the workspace note.
+
+   **If no:** Display the images inline and move on.
+
+**Regeneration:** If the user wants to swap a specific cell ("regenerate cell 3", "replace the texture image"), regenerate only that image. Update the HTML if one was created.
 
 **If no:** Skip and move to Phase 4.
 
